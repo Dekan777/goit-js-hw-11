@@ -12,6 +12,8 @@ let currentPage = 1;
 
 // Переменная для хранения элемента кнопки "Load more"
 const loadMoreButton = document.querySelector('.load-more');
+// Изначально скрываем кнопку "Load more"
+loadMoreButton.style.display = 'none';
 
 // Прослушиватель событий для формы
 document
@@ -25,6 +27,10 @@ document
       Notify.failure('Please enter a search query.');
       return;
     }
+
+    // Сбросить текущую страницу при новом поиске
+    currentPage = 1;
+
     // Используйте fetchDataWithPage с номером текущей страницы.
     await fetchDataWithPage(searchQuery, currentPage);
 
@@ -45,6 +51,31 @@ loadMoreButton.addEventListener('click', async function () {
   // Увеличить номер страницы для последующих запросов.
   currentPage++;
 });
+
+// Прослушиватель событий для кнопки "Search"
+document
+  .querySelector('.search-form__btn')
+  .addEventListener('click', async function () {
+    const searchQuery = document.getElementById('search-query').value;
+
+    // Проверка на отправку пустой формы
+    if (!searchQuery.trim()) {
+      Notify.failure('Please enter a search query.');
+      return;
+    }
+
+    // Сбросить текущую страницу при новом поиске
+    currentPage = 1;
+
+    // Используйте fetchDataWithPage с номером текущей страницы.
+    await fetchDataWithPage(searchQuery, currentPage);
+
+    // Увеличить номер страницы для последующих запросов.
+    currentPage++;
+
+    // Показать кнопку "Load more" после первого запроса
+    loadMoreButton.style.display = 'block';
+  });
 
 const fetchDataWithPage = async (searchQuery, page) => {
   const params = new URLSearchParams({
@@ -73,7 +104,7 @@ const fetchDataWithPage = async (searchQuery, page) => {
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
-      const images = data.hits.map(image => ({
+      const images = data.hits.map((image) => ({
         id: image.id,
         webformatURL: image.webformatURL,
         largeImageURL: image.largeImageURL,
@@ -84,11 +115,11 @@ const fetchDataWithPage = async (searchQuery, page) => {
         downloads: image.downloads,
       }));
 
+      // Рендеринг и добавление карточек изображений в контейнер.
+      appendImagesToGallery(images);
+
       // Получение свойства totalHits
       const totalHits = data.totalHits || 0;
-
-      // Рендеринг изображений
-      renderImages(images);
 
       // Проверка свойства totalHits
       if (data.hits.length === totalHits) {
@@ -96,7 +127,9 @@ const fetchDataWithPage = async (searchQuery, page) => {
         loadMoreButton.style.display = 'none';
 
         // Вывести уведомление о достижении конца результатов поиска
-        Notify.info("We're sorry, but you've reached the end of search results.");
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
       }
     }
   } catch (error) {
@@ -108,7 +141,7 @@ const fetchDataWithPage = async (searchQuery, page) => {
 };
 
 // Функция для создания элемента для карточки изображения
-const createCardElement = image => {
+const createCardElement = (image) => {
   const card = document.createElement('div');
   card.classList.add('photo-card');
 
@@ -144,19 +177,13 @@ const createCardElement = image => {
   return card;
 };
 
-// Функция для рендеринга карточек изображений
-const renderImages = images => {
+// Функция для рендеринга карточек изображений и добавления их в контейнер
+const appendImagesToGallery = (images) => {
   const galleryContainer = document.querySelector('.gallery');
 
-  // Очищайте контейнер перед каждым новым запросом
-  galleryContainer.innerHTML = '';
-
   // Создание и добавление карточек изображений в контейнер.
-  images.forEach(image => {
+  images.forEach((image) => {
     const card = createCardElement(image);
     galleryContainer.appendChild(card);
   });
 };
-
-// Изначально скрываем кнопку "Load more"
-loadMoreButton.style.display = 'none';
