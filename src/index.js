@@ -14,19 +14,26 @@ let currentPage = 1;
 const loadMoreButton = document.querySelector('.load-more');
 
 // Прослушиватель событий для формы
-document.getElementById('search-form').addEventListener('submit', async function (event) {
-  event.preventDefault();
-  const searchQuery = document.getElementById('search-query').value;
+document
+  .getElementById('search-form')
+  .addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const searchQuery = document.getElementById('search-query').value;
 
-  // Используйте fetchDataWithPage с номером текущей страницы.
-  await fetchDataWithPage(searchQuery, currentPage);
+    // Проверка на отправку пустой формы
+    if (!searchQuery.trim()) {
+      Notify.failure('Please enter a search query.');
+      return;
+    }
+    // Используйте fetchDataWithPage с номером текущей страницы.
+    await fetchDataWithPage(searchQuery, currentPage);
 
-  // Увеличить номер страницы для последующих запросов.
-  currentPage++;
+    // Увеличить номер страницы для последующих запросов.
+    currentPage++;
 
-  // Показать кнопку "Load more" после первого запроса
-  loadMoreButton.style.display = 'block';
-});
+    // Показать кнопку "Load more" после первого запроса
+    loadMoreButton.style.display = 'block';
+  });
 
 // Прослушиватель событий для кнопки "Load more"
 loadMoreButton.addEventListener('click', async function () {
@@ -47,7 +54,7 @@ const fetchDataWithPage = async (searchQuery, page) => {
     orientation: 'horizontal',
     safesearch: true,
     page: page,
-    per_page: 40, 
+    per_page: 40,
   });
 
   const fullURL = `${BASE_URL}?${params.toString()}`;
@@ -77,8 +84,20 @@ const fetchDataWithPage = async (searchQuery, page) => {
         downloads: image.downloads,
       }));
 
+      // Получение свойства totalHits
+      const totalHits = data.totalHits || 0;
+
       // Рендеринг изображений
       renderImages(images);
+
+      // Проверка свойства totalHits
+      if (data.hits.length === totalHits) {
+        // Скрыть кнопку "Load more"
+        loadMoreButton.style.display = 'none';
+
+        // Вывести уведомление о достижении конца результатов поиска
+        Notify.info("We're sorry, but you've reached the end of search results.");
+      }
     }
   } catch (error) {
     console.error('Error:', error);
