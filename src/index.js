@@ -32,7 +32,7 @@ document
     currentPage = 1;
 
     // Используйте fetchDataWithPage с номером текущей страницы.
-    await fetchDataWithPage(searchQuery, currentPage);
+    const data = await fetchDataWithPage(searchQuery, currentPage);
 
     // Увеличить номер страницы для последующих запросов.
     currentPage++;
@@ -46,7 +46,7 @@ loadMoreButton.addEventListener('click', async function () {
   const searchQuery = document.getElementById('search-query').value;
 
   // Используйте fetchDataWithPage с номером текущей страницы.
-  await fetchDataWithPage(searchQuery, currentPage);
+  const data = await fetchDataWithPage(searchQuery, currentPage);
 
   // Увеличить номер страницы для последующих запросов.
   currentPage++;
@@ -68,13 +68,14 @@ document
     currentPage = 1;
 
     // Используйте fetchDataWithPage с номером текущей страницы.
-    await fetchDataWithPage(searchQuery, currentPage);
+    const data = await fetchDataWithPage(searchQuery, currentPage);
 
     // Увеличить номер страницы для последующих запросов.
     currentPage++;
 
     // Показать кнопку "Load more" после первого запроса
     loadMoreButton.style.display = 'block';
+    Notify.success(`Hooray! We found ${data.totalHits} images.`);
   });
 
 const fetchDataWithPage = async (searchQuery, page) => {
@@ -104,7 +105,7 @@ const fetchDataWithPage = async (searchQuery, page) => {
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
-      const images = data.hits.map((image) => ({
+      const images = data.hits.map(image => ({
         id: image.id,
         webformatURL: image.webformatURL,
         largeImageURL: image.largeImageURL,
@@ -131,6 +132,8 @@ const fetchDataWithPage = async (searchQuery, page) => {
           "We're sorry, but you've reached the end of search results."
         );
       }
+
+      return data; // Вернуть данные для использования в вызывающем коде.
     }
   } catch (error) {
     console.error('Error:', error);
@@ -141,7 +144,7 @@ const fetchDataWithPage = async (searchQuery, page) => {
 };
 
 // Функция для создания элемента для карточки изображения
-const createCardElement = (image) => {
+const createCardElement = image => {
   const card = document.createElement('div');
   card.classList.add('photo-card');
 
@@ -178,11 +181,11 @@ const createCardElement = (image) => {
 };
 
 // Функция для рендеринга карточек изображений и добавления их в контейнер
-const appendImagesToGallery = (images) => {
+const appendImagesToGallery = images => {
   const galleryContainer = document.querySelector('.gallery');
 
   // Создание и добавление карточек изображений в контейнер.
-  images.forEach((image) => {
+  images.forEach(image => {
     const card = createCardElement(image);
     galleryContainer.appendChild(card);
   });
