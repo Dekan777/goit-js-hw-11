@@ -170,6 +170,19 @@ const createCard = image => {
 const appendImagesToGallery = images => {
   const galleryContainer = document.querySelector('.gallery');
 
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captions: false,
+    close: false,
+    spinner: true,
+    showCounter: false,
+    animationSlide: false,
+    preloading: true,
+    enableZoom: true,
+    docClose: true,
+    swipeClose: true,
+    disableRightClick: false,
+  });
+  
   // Создание и добавление карточек изображений в контейнер.
   images.forEach(image => {
     const card = createCardElement(image);
