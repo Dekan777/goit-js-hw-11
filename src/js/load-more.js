@@ -1,11 +1,7 @@
-// // // buttonUtils.js
 
-// export const activateButton = (button) => {
-//   button.style.display = 'block';
-//   button.disabled = false;
-// };
+// Функция для очистки галереи от предыдущих результатов
+export const clearGallery = () => {
+  const galleryContainer = document.querySelector('.gallery');
+  galleryContainer.innerHTML = ''; // Очищаем контейнер
+};
 
-// export const deactivateButton = (button) => {
-//   button.style.display = 'none';
-//   button.disabled = true;
-// };

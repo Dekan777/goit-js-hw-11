@@ -1,29 +1,23 @@
-// api.js
+import axios from 'axios';
 
 const API_KEY = '40913963-8e579c79c98d472778d15f639';
 const BASE_URL = 'https://pixabay.com/api/';
 
 export const fetchDataWithPage = async (searchQuery, page) => {
-  const params = new URLSearchParams({
-    key: API_KEY,
-    q: searchQuery,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    page: page,
-    per_page: 40,
-  });
-
-  const fullURL = `${BASE_URL}?${params.toString()}`;
-
   try {
-    const response = await fetch(fullURL);
+    const response = await axios.get(BASE_URL, {
+      params: {
+        key: API_KEY,
+        q: searchQuery,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        page: page,
+        per_page: 40,
+      },
+    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = response.data;
 
     if (data.hits.length === 0) {
       return { error: 'No images found' };
