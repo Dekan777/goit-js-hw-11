@@ -18,25 +18,7 @@ document
   .getElementById('search-form')
   .addEventListener('submit', function (event) {
     event.preventDefault();
-    const searchQuery = document.getElementById('search-query').value;
-
-    // Проверка на отправку пустой формы
-    if (!searchQuery.trim()) {
-      Notify.failure('Please enter a search query.');
-      return;
-    }
-
-    // Сбросить текущую страницу при новом поиске
     currentPage = 1;
-
-    // Используйте fetchDataWithPage с номером текущей страницы.
-    fetchDataWithPage(searchQuery, currentPage).then(handleData);
-
-    // Увеличить номер страницы для последующих запросов.
-    currentPage++;
-
-    // Показать кнопку "Load more" после первого запроса
-    loadMoreButton.style.display = 'block';
   });
 
 // Прослушиватель событий для кнопки "Load more"
@@ -58,6 +40,7 @@ document
 
     // Проверка на отправку пустой формы
     if (!searchQuery.trim()) {
+      Notify.failure('Please enter a search query.');
       return;
     }
 
