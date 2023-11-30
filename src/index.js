@@ -12,9 +12,6 @@ const loadMoreButton = document.querySelector('.load-more');
 loadMoreButton.style.display = 'none';
 let currentPage = 1;
 
-// Создаем экземпляр SimpleLightbox
-// const lightbox = new SimpleLightbox('.gallery a');
-
 const lightbox = new SimpleLightbox('.gallery a', {
     captions: false,
     close: false,
