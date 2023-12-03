@@ -249,19 +249,30 @@ function handleScroll(data) {
     }
   }
 }
-
 window.addEventListener('scroll', function () {
   const searchQuery = document.getElementById('search-query').value;
   if (!searchQuery.trim()) {
     return;
   }
-  searchFormBtn.disabled = true;
 
-  fetchDataWithPage(searchQuery, currentPage).then(data => {
-    handleScroll(data);
-    searchFormBtn.disabled = false;
-  });
+  const loadMoreAnchor = document.getElementById('loadMoreAnchor');
+  const anchorPosition = loadMoreAnchor.getBoundingClientRect().top;
+
+  if (anchorPosition <= window.innerHeight) {
+    // Пользователь доскроллил до якоря, загружаем следующую страницу
+    fetchDataAndRenderNextPage(searchQuery);
+  }
+
+  // Вызов функции handleScroll с передачей данных (например, data) из вашего кода
+  handleScroll(data);
 });
+
+function fetchDataAndRenderNextPage(searchQuery) {
+  fetchDataWithPage(searchQuery, currentPage).then(data => {
+    handleData(data);
+    currentPage++;
+  });
+}
 
 function renderContent() {
   const searchQuery = document.getElementById('search-query').value;
