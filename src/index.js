@@ -233,23 +233,35 @@ searchForm.addEventListener('submit', function (event) {
   fetchDataWithPage(searchQuery, currentPage).then(data => {
     handleData(data);
     currentPage++;
-    // loadMoreButton.style.display = 'block';
-    Notify.success(`Hooray! We found ${data.totalHits} images.`);
     searchFormBtn.disabled = false;
   });
 });
 
-function handleScroll() {
+function handleScroll(data) {
   const windowHeight = window.innerHeight;
   const documentHeight = document.documentElement.scrollHeight;
   const scrollPosition = window.scrollY;
 
-  if (documentHeight - (windowHeight + scrollPosition) <= 200) {
-    renderContent();
+  // Проверка, чтобы не загружать контент, если уже загружены все изображения
+  if (currentPage <= data.totalHits) {
+    if (documentHeight - (windowHeight + scrollPosition) <= 200) {
+      renderContent();
+    }
   }
 }
 
-window.addEventListener('scroll', handleScroll);
+window.addEventListener('scroll', function () {
+  const searchQuery = document.getElementById('search-query').value;
+  if (!searchQuery.trim()) {
+    return;
+  }
+  searchFormBtn.disabled = true;
+
+  fetchDataWithPage(searchQuery, currentPage).then(data => {
+    handleScroll(data);
+    searchFormBtn.disabled = false;
+  });
+});
 
 function renderContent() {
   const searchQuery = document.getElementById('search-query').value;

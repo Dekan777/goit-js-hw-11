@@ -5,3 +5,4 @@ export const clearGallery = () => {
   galleryContainer.innerHTML = ''; // Очищаем контейнер
 };
 
+
