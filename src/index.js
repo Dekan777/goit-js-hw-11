@@ -319,7 +319,7 @@ const handleData = data => {
 
     if (data.data.length === data.totalHits) {
       loadMoreButton.style.display = 'none';
-      Notify.info("We're sorry, but you've reached the end of search results.");
+      // Notify.info("We're sorry, but you've reached the end of search results.");
     }
   }
 };
