@@ -243,6 +243,7 @@ function handleScroll() {
   // Ваш код обработки прокрутки
 }
 
+
 window.addEventListener('scroll', function () {
   const searchQuery = document.getElementById('search-query').value;
   if (!searchQuery.trim()) {
