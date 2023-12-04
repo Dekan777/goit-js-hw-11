@@ -190,6 +190,9 @@
 //   lightbox.refresh();
 // };
 
+
+
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -200,7 +203,7 @@ import { clearGallery } from './js/load-more';
 const searchFormBtn = document.querySelector('.search-form__btn');
 const searchForm = document.getElementById('search-form');
 const loadMoreButton = document.querySelector('.load-more');
-
+let data = null;
 loadMoreButton.style.display = 'none';
 let currentPage = 1;
 
@@ -216,7 +219,6 @@ const lightbox = new SimpleLightbox('.gallery a', {
   swipeClose: true,
   disableRightClick: false,
 });
-
 searchForm.addEventListener('submit', function (event) {
   event.preventDefault();
   const searchQuery = document.getElementById('search-query').value;
@@ -230,25 +232,17 @@ searchForm.addEventListener('submit', function (event) {
   clearGallery();
   lightbox.refresh();
 
-  fetchDataWithPage(searchQuery, currentPage).then(data => {
+  fetchDataWithPage(searchQuery, currentPage).then(newData => {
+    data = newData;  // Update the global data variable
     handleData(data);
     currentPage++;
     searchFormBtn.disabled = false;
   });
 });
-
-function handleScroll(data) {
-  const windowHeight = window.innerHeight;
-  const documentHeight = document.documentElement.scrollHeight;
-  const scrollPosition = window.scrollY;
-
-  // Проверка, чтобы не загружать контент, если уже загружены все изображения
-  if (currentPage <= data.totalHits) {
-    if (documentHeight - (windowHeight + scrollPosition) <= 200) {
-      renderContent();
-    }
-  }
+function handleScroll() {
+  // Ваш код обработки прокрутки
 }
+
 window.addEventListener('scroll', function () {
   const searchQuery = document.getElementById('search-query').value;
   if (!searchQuery.trim()) {
@@ -259,21 +253,18 @@ window.addEventListener('scroll', function () {
   const anchorPosition = loadMoreAnchor.getBoundingClientRect().top;
 
   if (anchorPosition <= window.innerHeight) {
-    // Пользователь доскроллил до якоря, загружаем следующую страницу
     fetchDataAndRenderNextPage(searchQuery);
   }
 
-  // Вызов функции handleScroll с передачей данных (например, data) из вашего кода
-  handleScroll(data);
+  handleScroll();  // Теперь функция handleScroll определена
 });
-
 function fetchDataAndRenderNextPage(searchQuery) {
-  fetchDataWithPage(searchQuery, currentPage).then(data => {
+  fetchDataWithPage(searchQuery, currentPage).then(newData => {
+    data = newData;  // Update the global data variable
     handleData(data);
     currentPage++;
   });
 }
-
 function renderContent() {
   const searchQuery = document.getElementById('search-query').value;
 
